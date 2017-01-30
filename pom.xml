@@ -1,0 +1,220 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.xujinpeng</groupId>
+	<packaging>jar</packaging>
+	<version>1.1-SNAPSHOT</version>
+	<name>S3Project</name>
+	<url>http://maven.apache.org</url>
+	
+	<properties>
+        <amazon-kinesis-client.version>1.6.2</amazon-kinesis-client.version>
+        <aws-java-sdk.version>1.10.67</aws-java-sdk.version>
+        <elasticsearch.version>1.2.1</elasticsearch.version>
+        <fasterxml-jackson.version>2.7.4</fasterxml-jackson.version>
+        <atmosphere-version>2.3.0-RC6</atmosphere-version>
+    </properties>
+    
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.dropwizard</groupId>
+			<artifactId>dropwizard-core</artifactId>
+			<version>0.9.2</version>
+		</dependency>
+		
+		<!-- AWS Related -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.16.8</version>
+		</dependency>
+		
+		<dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>amazon-kinesis-client</artifactId>
+            <version>${amazon-kinesis-client.version}</version>
+        </dependency>
+        <!-- Note that some of dependencies below are shared with the Amazon Kinesis Client library. -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-core</artifactId>
+            <version>${aws-java-sdk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-kinesis</artifactId>
+            <version>${aws-java-sdk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-dynamodb</artifactId>
+            <version>${aws-java-sdk.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>${aws-java-sdk.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-cloudformation</artifactId>
+			<version>${aws-java-sdk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-autoscaling</artifactId>
+			<version>${aws-java-sdk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-ec2</artifactId>
+			<version>${aws-java-sdk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>amazon-kinesis-producer</artifactId>
+			<version>0.10.2</version>
+		</dependency>
+				
+        
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>${elasticsearch.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${fasterxml-jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${fasterxml-jackson.version}</version>
+        </dependency>
+        
+        <!--for pub/sub server-->
+        <dependency>
+            <groupId>org.atmosphere</groupId>
+            <artifactId>atmosphere-runtime</artifactId>
+            <version>${atmosphere-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.atmosphere</groupId>
+            <artifactId>atmosphere-annotations</artifactId>
+            <version>${atmosphere-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>[1, )</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <artifactId>websocket-server</artifactId>
+            <version>9.2.9.v20150224</version>
+        </dependency>
+        <!--end pub/sub server-->
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-shade-plugin</artifactId>
+			    <version>1.6</version>
+			    <configuration>
+			        <createDependencyReducedPom>true</createDependencyReducedPom>
+			        <filters>
+			            <filter>
+			                <artifact>*:*</artifact>
+			                <excludes>
+			                    <exclude>META-INF/*.SF</exclude>
+			                    <exclude>META-INF/*.DSA</exclude>
+			                    <exclude>META-INF/*.RSA</exclude>
+			                </excludes>
+			            </filter>
+			        </filters>
+			    </configuration>
+			    <executions>
+			        <execution>
+			            <phase>package</phase>
+			            <goals>
+			                <goal>shade</goal>
+			            </goals>
+			            <configuration>
+			                <transformers>
+			                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+			                    <!-- <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+			                        <mainClass>com.example.helloworld.HelloWorldApplication</mainClass>
+			                    </transformer> -->
+			                </transformers>
+			            </configuration>
+			        </execution>
+			    </executions>
+			</plugin>
+			
+			<!--<plugin>-->
+			    <!--<groupId>org.apache.maven.plugins</groupId>-->
+			    <!--<artifactId>maven-jar-plugin</artifactId>-->
+			    <!--<version>2.4</version>-->
+			    <!--<configuration>-->
+			        <!--<archive>-->
+			            <!--<manifest>-->
+			                <!--<addDefaultImplementationEntries>true</addDefaultImplementationEntries>-->
+			            <!--</manifest>-->
+			        <!--</archive>-->
+			    <!--</configuration>-->
+			<!--</plugin>-->
+
+			<plugin>
+				<!-- Build an executable JAR -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>com.xujinpeng.S3Application</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
+				<directory>target/generated-resources</directory>
+			</resource>
+		</resources>
+	</build>
+
+	<artifactId>S3Project</artifactId>
+</project>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="s3Project">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+		<title>S3 Project</title>
+		<script src="js/angular.min.js"></script>
+		<script src="js/atmosphere.js"></script>
+		<script src="js/angular-atmosphere.js"></script>
+		<script src="js/controller.js"></script>
+
+		<link href="css/s3Project.css" rel="stylesheet"/>
+	</head>
+		
+	<body ng-controller="s3Ctrl">
+		<h1>AWS Kinesis Control Panel</h1>
+		<div>
+			<button ng-click="kinesisCtrl()">{{buttonLabel}}</button>
+			<button ng-click="deleteStream()">Delete Stream</button>
+		</div>
+		
+  		<ul style="list-style-type: none;">
+			<table>
+				<tr>
+					<th>Username</th>
+					<th>Login Time</th>
+					<th>Game Duration</th>
+					<th>Game Result</th>
+					<th>Is Black Jack?</th>
+				</tr>
+				<tr ng-repeat="data in displayDataSet.slice().reverse()">
+					<td>{{data.username}}</td>
+					<td>{{data.loginTime}}</td>
+					<td>{{data.gameDuration}}</td>
+					<td>{{data.gameResult}}</td>
+					<td>
+						<span ng-if="data.isBlackJack == 'true'">
+							<img src="img/black_jack_icon.jpeg" height="50" width="50" />
+						</span>
+						<!--{{data.isBlackJack}}-->
+					</td>
+				</tr>
+			</table>
+		    <!--<li ng-repeat="data in displayDataSet.slice().reverse()">-->
+		    	<!--{{data}}-->
+		    <!--</li>-->
+	  	</ul>
+
+	</body>
+</html>
