@@ -1,1 +1,1 @@
-"# S3-Project" 
+This is a good sample for the AWS S3 server.
